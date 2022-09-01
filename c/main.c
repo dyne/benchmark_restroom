@@ -34,6 +34,10 @@
 #endif
 #include <curl/curl.h>
 
+#define URL "/api/zenswarm-oracle-http-post"
+#define DATA "{\"data\":{\"post\":{\"data\":{\"myName\":\"User123456\"}},\"endpoint\":\"https://apiroom.net/api/dyneorg/API-generate-keyring-passing-user-name\"},\"keys\":{}}"
+
+
 #define MAX_PARALLEL 20 /* number of simultaneous transfers */
 #define NUM_URLS 2500
 
@@ -47,11 +51,11 @@ static size_t write_cb(char *data, size_t n, size_t l, void *userp)
 }
 
 char *urls[] = {
-	"http://localhost:25000/api/zenswarm-oracle-verify-ecdsa",
-	"http://localhost:25001/api/zenswarm-oracle-verify-ecdsa",
-	"http://localhost:25002/api/zenswarm-oracle-verify-ecdsa",
-	"http://localhost:25003/api/zenswarm-oracle-verify-ecdsa",
-	"http://localhost:25004/api/zenswarm-oracle-verify-ecdsa"
+	"http://localhost:25000" URL,
+	"http://localhost:25001" URL,
+	"http://localhost:25002" URL,
+	"http://localhost:25003" URL,
+	"http://localhost:25004" URL
 };
 
 static void add_transfer(CURLM *cm, int i)
@@ -64,7 +68,7 @@ struct curl_slist *list = NULL;
   curl_easy_setopt(eh, CURLOPT_WRITEFUNCTION, write_cb);
   curl_easy_setopt(eh, CURLOPT_URL, urls[i % 4]);
   curl_easy_setopt(eh, CURLOPT_PRIVATE, urls[i % 4]);
-  curl_easy_setopt(eh, CURLOPT_POSTFIELDS, "{\"data\":{\"asset\":{\"data\":{\"houses\":[{\"name\":\"Harry\",\"team\":\"Gryffindor\"},{\"name\":\"Draco\",\"team\":\"Slytherin\"}],\"number\":42}},\"ecdsa signature\":{\"r\":\"TOmfgO7blPNnuODhAtIBYWQEOqsv6vVhknLSbcDb0Dc=\",\"s\":\"WirTGe4s1mbpCJ4N1y0nPwvi+q6bYAdDJq+q3EMDFGM=\"},\"ecdsa_public_key\":\"BGrFCQHQ9D3Nh7hN1xCubXrRUjJl/Uvg+76kdfY4pJRhezxREKQFSEvsghRCiavo5mQhnwfQ79oz03obR4FfdVc=\"},\"keys\":{}}");
+  curl_easy_setopt(eh, CURLOPT_POSTFIELDS, DATA);
   curl_easy_setopt(eh, CURLOPT_HTTPHEADER, list);
   curl_multi_add_handle(cm, eh);
 }
